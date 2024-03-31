@@ -8,3 +8,7 @@ test:
 
 clean:
 	cargo clean
+
+
+run:
+	cargo run
