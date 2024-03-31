@@ -1,5 +1,10 @@
+TESTS = test_udp_comm \
+#		test_config
+
 test:
-	cargo test -- --show-output
+	for name in $(TESTS); do \
+  		cargo test -- --show-output $$name ; \
+  	done
 
 clean:
 	cargo clean
