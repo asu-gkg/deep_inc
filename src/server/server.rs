@@ -22,6 +22,19 @@ impl Server {
     pub async fn start_udp_service(&self) {
         println!("I'm No. {} server. About me: {:?}", self.me, self);
         let socket = UdpSocket::bind(self.socket_addr());
+        // todo
+    }
+    pub async fn start_udp_service_future(&self) {
+        println!("I'm No. {} server. About me: {:?}", self.me, self);
+        let socket = UdpSocket::bind(self.socket_addr());
+
+        for i in 0..100 {
+            print!("1")
+        }
+    }
+    pub async fn start_udp_service_tokio(&self) {
+        println!("I'm No. {} server. About me: {:?}", self.me, self);
+        let socket = UdpSocket::bind(self.socket_addr());
 
         for i in 0..100 {
             print!("1")
