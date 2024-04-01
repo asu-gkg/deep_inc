@@ -22,6 +22,9 @@ pub fn say_hello() {
     server::server::say_hello_from_server(CALLER);
 }
 
-pub fn make_server() {
-    Server::new(0, 1, Ipv4Addr::new(0, 0, 0, 0));
+pub fn make_local_server(server_id: usize, worker_size: usize) -> Server {
+    let server = Server::new(server_id, worker_size, Ipv4Addr::new(0, 0, 0, 0));
+    server
 }
+
+pub fn make_server() {}

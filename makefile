@@ -17,5 +17,8 @@ clean:
 run:
 	cargo run
 
+check:
+	cargo check
+
 test_config:
 	cargo test -- --show-output test_config

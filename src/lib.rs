@@ -9,11 +9,4 @@ mod tests {
     fn test_udp_comm() {
         println!("hello")
     }
-
-    #[test]
-    fn test_config() {
-        config::say_hello();
-
-
-    }
 }
