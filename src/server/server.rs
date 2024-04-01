@@ -1,18 +1,18 @@
-use std::net::IpAddr;
+use std::net::{Ipv4Addr};
 use crate::server::worker::Worker;
 
 #[derive(Debug)]
-struct Server {
+pub struct Server {
     me: usize,
     workers: Vec<Worker>,
-    ip_addr: IpAddr,
+    ipv4_addr: Ipv4Addr,
 }
 
 
 impl Server {
-    pub fn new(server_id: usize, worker_size: usize, ip_addr: IpAddr) -> Self {
+    pub fn new(server_id: usize, worker_size: usize, ipv4_addr: Ipv4Addr) -> Self {
         // todo: init workers
-        Self { me: server_id, workers: vec![], ip_addr }
+        Self { me: server_id, workers: vec![], ipv4_addr }
     }
 }
 

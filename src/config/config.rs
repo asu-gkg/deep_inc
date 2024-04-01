@@ -1,4 +1,6 @@
+use std::net::{IpAddr, Ipv4Addr};
 use crate::server;
+use crate::server::server::Server;
 
 #[derive(Debug)]
 struct Config {
@@ -21,5 +23,5 @@ pub fn say_hello() {
 }
 
 pub fn make_server() {
-
+    Server::new(0, 1, Ipv4Addr::new(0, 0, 0, 0));
 }
