@@ -1,5 +1,10 @@
+mod server;
+mod config;
+
 #[cfg(test)]
 mod tests {
+    use crate::config::config;
+
     #[test]
     fn test_udp_comm() {
         println!("hello")
@@ -7,6 +12,8 @@ mod tests {
 
     #[test]
     fn test_config() {
-        println!("todo")
+        config::say_hello();
+
+
     }
 }

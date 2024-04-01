@@ -1,5 +1,5 @@
-mod config;
-mod server;
+pub mod config;
+pub mod server;
 
 const CALLER: &str = "Main";
 fn main() {
