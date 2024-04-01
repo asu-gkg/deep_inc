@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 use std::os::unix::net::SocketAddr;
+use log::log;
 use crate::server::worker::Worker;
 
 #[derive(Debug)]
@@ -24,21 +25,29 @@ impl Server {
         let socket = UdpSocket::bind(self.socket_addr());
         // todo
     }
-    pub async fn start_udp_service_future(&self) {
-        println!("I'm No. {} server. About me: {:?}", self.me, self);
-        let socket = UdpSocket::bind(self.socket_addr());
 
+    fn do_something() {
         for i in 0..100 {
             print!("1")
         }
+        print!("\n");
+    }
+    pub async fn start_udp_service_future(&self) {
+        println!("I'm No. {} server. About me: {:?}", self.me, self);
+        let socket = UdpSocket::bind(self.socket_addr());
+        Self::do_something();
+    }
+
+    pub async fn start_udp_service_await(&self) {
+        println!("I'm No. {} server. About me: {:?}", self.me, self);
+        let socket = UdpSocket::bind(self.socket_addr());
+        Self::do_something();
     }
     pub async fn start_udp_service_tokio(&self) {
         println!("I'm No. {} server. About me: {:?}", self.me, self);
         let socket = UdpSocket::bind(self.socket_addr());
 
-        for i in 0..100 {
-            print!("1")
-        }
+        Self::do_something();
     }
 
     fn socket_addr(&self) -> SocketAddrV4 {
