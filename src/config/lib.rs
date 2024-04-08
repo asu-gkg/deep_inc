@@ -1,12 +1,12 @@
 #[cfg(test)]
 mod tests {
-    use crate::config::config::make_local_server;
+    use std::net::Ipv4Addr;
     use std::time::{Duration};
+    use crate::server::server::Server;
 
-    // #[test]
     #[tokio::test]
     async fn test_config_tokio() {
-        let local_server = make_local_server(0, 1);
+        let local_server = Server::new(0, 1, Ipv4Addr::new(0, 0, 0, 0));
         tokio::spawn(async move {
             local_server.start_udp_service_tokio().await;
         });

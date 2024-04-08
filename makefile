@@ -22,3 +22,6 @@ check:
 
 test_config:
 	cargo test -- --show-output test_config
+
+test_sim:
+	cargo test -- --show-output simulate_it

@@ -9,3 +9,4 @@ edition = "2021"
 futures = "0.3"
 tokio = { version = "1", features = ["full", "test-util"] }
 log = "0.4.21"
+turmoil = "0.6"
