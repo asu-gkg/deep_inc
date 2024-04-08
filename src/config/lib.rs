@@ -33,7 +33,7 @@ mod tests {
             socket.connect("0.0.0.0:9527").expect("socket connect fail");
             let data = b"Hello, server! I'm test client!";
             socket.send(data).expect("send data fail");
-            println!("client sends a msg to server");
+            println!("Client sends a msg to server");
         });
 
         tokio::time::sleep(Duration::from_secs(5)).await;

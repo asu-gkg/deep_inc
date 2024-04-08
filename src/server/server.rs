@@ -5,6 +5,8 @@ use tokio::net::UdpSocket;
 
 use crate::server::worker::Worker;
 
+const MAX_PACKET_BUFFER_SIZE: usize = 1452;
+
 #[derive(Debug)]
 pub struct Server {
     pub me: usize,
@@ -31,16 +33,15 @@ impl Server {
         println!("I'm No. {} server. About me: {:?}", self.me, self);
         let socket = UdpSocket::bind(self.socket_addr()).await.unwrap();
         let r = Arc::new(socket);
-        let s = r.clone();
 
-        let mut buf = [0; 1024]; // fixme: if we only have one buffer, it would cause high-computing time
         loop {
+            // fixme: didn't add restriction to the buffer. + flow control + congestion control
+            let mut buf = [0; MAX_PACKET_BUFFER_SIZE];
+            let s = r.clone();
             let (len, addr) = r.recv_from(&mut buf).await.unwrap();
-            let bytes = buf.to_vec();
-            let s = s.clone();
             tokio::spawn(async move {
                 println!("{:?} bytes received from {:?}", len, addr);
-                s.send_to(&bytes, &addr).await.unwrap();
+                s.send_to(&buf, &addr).await.unwrap();
             });
         }
     }
