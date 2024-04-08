@@ -1,7 +1,8 @@
 use std::fmt::Debug;
-use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
-use std::os::unix::net::SocketAddr;
-use log::log;
+use std::net::{Ipv4Addr, SocketAddrV4};
+use std::sync::{Arc};
+use tokio::net::UdpSocket;
+
 use crate::server::worker::Worker;
 
 #[derive(Debug)]
@@ -22,32 +23,26 @@ impl Server {
 
     pub async fn start_udp_service(&self) {
         println!("I'm No. {} server. About me: {:?}", self.me, self);
-        let socket = UdpSocket::bind(self.socket_addr());
+
         // todo
     }
 
-    fn do_something() {
-        for i in 0..100 {
-            print!("1")
-        }
-        print!("\n");
-    }
-    pub async fn start_udp_service_future(&self) {
-        println!("I'm No. {} server. About me: {:?}", self.me, self);
-        let socket = UdpSocket::bind(self.socket_addr());
-        Self::do_something();
-    }
-
-    pub async fn start_udp_service_await(&self) {
-        println!("I'm No. {} server. About me: {:?}", self.me, self);
-        let socket = UdpSocket::bind(self.socket_addr());
-        Self::do_something();
-    }
     pub async fn start_udp_service_tokio(&self) {
         println!("I'm No. {} server. About me: {:?}", self.me, self);
-        let socket = UdpSocket::bind(self.socket_addr());
+        let socket = UdpSocket::bind(self.socket_addr()).await.unwrap();
+        let r = Arc::new(socket);
+        let s = r.clone();
 
-        Self::do_something();
+        let mut buf = [0; 1024]; // fixme: if we only have one buffer, it would cause high-computing time
+        loop {
+            let (len, addr) = r.recv_from(&mut buf).await.unwrap();
+            let bytes = buf.to_vec();
+            let s = s.clone();
+            tokio::spawn(async move {
+                println!("{:?} bytes received from {:?}", len, addr);
+                s.send_to(&bytes, &addr).await.unwrap();
+            });
+        }
     }
 
     fn socket_addr(&self) -> SocketAddrV4 {
