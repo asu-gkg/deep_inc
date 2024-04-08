@@ -5,7 +5,7 @@ use crate::server::server::Server;
 #[derive(Debug)]
 pub struct Config {
     standalone: bool,
-    server: Server,
+    pub server: Server,
 }
 
 const CALLER: &str = "Config";

@@ -21,7 +21,7 @@ check:
 	cargo check
 
 test_config:
-	cargo test -- --show-output test_config
+	RUST_BACKTRACE=1 cargo test -- --show-output test_config
 
 test_sim:
-	cargo test -- --show-output simulate_it
+	RUST_BACKTRACE=1 cargo test -- --show-output test_ping_server

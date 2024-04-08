@@ -7,7 +7,7 @@ use crate::server::worker::Worker;
 
 #[derive(Debug)]
 pub struct Server {
-    me: usize,
+    pub me: usize,
     workers: Vec<Worker>,
     ipv4_addr: Ipv4Addr,
     port: u16,
