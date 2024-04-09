@@ -23,7 +23,7 @@ mod tests {
             let conf = Config::new(true, 0);
             match timeout(duration, conf.server.start_udp_service_tokio()).await {
                 Ok(_) => { panic!("It shouldn't happen.") }
-                Err(_) => { println!("After 3 seconds, server{} exited.", conf.server.me) }
+                Err(_) => { println!("After 3 seconds, server. {} exited.", conf.server.me) }
             }
         });
 

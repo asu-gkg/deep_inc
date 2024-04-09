@@ -33,14 +33,14 @@ impl Server {
         println!("I'm No. {} server. About me: {:?}", self.me, self);
         let socket = UdpSocket::bind(self.socket_addr()).await.unwrap();
         let r = Arc::new(socket);
-
+        let server_id = self.me;
         loop {
             // fixme: didn't add restriction to the buffer. + flow control + congestion control
             let mut buf = [0; MAX_PACKET_BUFFER_SIZE];
             let s = r.clone();
             let (len, addr) = r.recv_from(&mut buf).await.unwrap();
             tokio::spawn(async move {
-                println!("{:?} bytes received from {:?}", len, addr);
+                println!("Server. {}: {:?} bytes received from {:?}", server_id, len, addr);
                 s.send_to(&buf, &addr).await.unwrap();
             });
         }
