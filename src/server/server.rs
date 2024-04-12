@@ -2,8 +2,10 @@ use std::fmt::Debug;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::sync::{Arc};
 use tokio::net::UdpSocket;
+use tokio::sync::Mutex;
 
 use crate::server::worker::Worker;
+use crate::server::msg::{AddRequest, AddResponse, PingRequest, PingResponse, Request, Response};
 
 const MAX_PACKET_BUFFER_SIZE: usize = 1452;
 
@@ -17,16 +19,32 @@ pub struct Server {
 
 const DEFAULT_PORT: u16 = 9527;
 
+pub type SharedServer = Arc<Mutex<Server>>;
+
 impl Server {
     pub fn new(server_id: usize, worker_size: usize, ipv4_addr: Ipv4Addr) -> Self {
         // todo: init workers
         Self { me: server_id, workers: vec![], ipv4_addr, port: DEFAULT_PORT }
     }
 
-    pub async fn start_udp_service(&self) {
-        println!("I'm No. {} server. About me: {:?}", self.me, self);
+    fn handle_request(&self, req: Request) -> Response {
+        match req {
+            Request::Add(req) => {
+                Response::Add(self.handle_add(req).unwrap())
+            }
+            Request::Ping(req) => {
+                Response::Ping(self.handle_ping(req).unwrap())
+            }
+        }
+    }
 
-        // todo
+    fn handle_add(&self, req: AddRequest) -> Option<AddResponse> {
+        println!("recv add req");
+        None
+    }
+
+    fn handle_ping(&self, req: PingRequest) -> Option<PingResponse> {
+        None
     }
 
     pub async fn start_udp_service_tokio(&self) {
@@ -48,6 +66,23 @@ impl Server {
 
     fn socket_addr(&self) -> SocketAddrV4 {
         SocketAddrV4::new(self.ipv4_addr, self.port)
+    }
+}
+
+pub async fn start_udp_service(server: Arc<Mutex<Server>>) {
+    println!("I'm No. {} server. About me: {:?}", server.lock().await.me, server);
+    let socket = UdpSocket::bind(server.lock().await.socket_addr()).await.unwrap();
+    let r = Arc::new(socket);
+    loop {
+        let mut buf = [0; MAX_PACKET_BUFFER_SIZE];
+        let tx = r.clone();
+        let (len, addr) = r.recv_from(&mut buf).await.unwrap();
+        let ss = server.clone();
+        tokio::spawn(async move {
+            let req: Request = bincode::deserialize(&buf).unwrap();
+            let resp = ss.lock().await.handle_request(req);
+            tx.send_to(&buf, &addr).await.unwrap();
+        });
     }
 }
 
