@@ -39,11 +39,13 @@ impl Server {
     }
 
     fn handle_add(&self, req: AddRequest) -> Option<AddResponse> {
+        // add code here
         println!("recv add req");
         None
     }
 
     fn handle_ping(&self, req: PingRequest) -> Option<PingResponse> {
+        // add code here
         None
     }
 
