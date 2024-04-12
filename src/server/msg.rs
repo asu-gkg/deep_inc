@@ -2,6 +2,18 @@ use serde_derive::{Deserialize, Serialize};
 
 
 #[derive(Serialize, Deserialize, Debug)]
+pub enum Request {
+    Add(AddRequest),
+    Ping(PingRequest),
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum Response {
+    Add(AddResponse),
+    Ping(PingResponse),
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct AddRequest {
     pub sender_id: usize,
     pub receiver_id: usize,
@@ -51,16 +63,4 @@ impl PingResponse {
     pub fn new(sender_id: usize, receiver_id: usize, _str: String) -> Self {
         Self { sender_id, receiver_id, _str }
     }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub enum Request {
-    Add(AddRequest),
-    Ping(PingRequest),
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub enum Response {
-    Add(AddResponse),
-    Ping(PingResponse),
 }
