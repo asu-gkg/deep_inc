@@ -40,7 +40,7 @@ impl Server {
 
     fn handle_add(&self, req: AddRequest) -> Option<AddResponse> {
         // add code here
-        println!("recv add req");
+        println!("recv add req, a: {}, b: {}", req.a, req.b);
         None
     }
 
