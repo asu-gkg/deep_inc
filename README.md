@@ -46,6 +46,16 @@ export LIBTORCH_LIB=/path/to/libtorch/
 export LD_LIBRARY_PATH=$LIBTORCH/lib:$LD_LIBRARY_PAT
 ```
 
+My solution is 
+
+``` 
+export LIBTORCH=/mnt/c/Users/asu/RustroverProjects/libtorch/linux/libtorch-cxx11-abi-shared-with-deps-2.2.0+cu118/libtorch
+export LIBTORCH_INCLUDE=/mnt/c/Users/asu/RustroverProjects/libtorch/linux/libtorch-cxx11-abi-shared-with-deps-2.2.0+cu118/libtorch
+export LIBTORCH_LIB=/mnt/c/Users/asu/RustroverProjects/libtorch/linux/libtorch-cxx11-abi-shared-with-deps-2.2.0+cu118/libtorch
+export LD_LIBRARY_PATH=$LIBTORCH/lib:$LD_LIBRARY_PATH
+```
+
+
 2. Add tch
 
 ``` 
