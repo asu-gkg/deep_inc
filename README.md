@@ -1,12 +1,14 @@
 # DeepINC
 
 ## functions
-1. The most important collective communication operation in distributed deep learning is all-reduce. 
-Need to support cloud-scale all-reduce operation.
+
+1. The most important collective communication operation in distributed deep learning is all-reduce.
+   Need to support cloud-scale all-reduce operation.
 
 ## potential optimization
+
 1. Use **ebpf**/container/virtualization technology to support multiple tenants scenario.
-2. Use rdma/erpc/zero-copy Serialization to speedup 
+2. Use rdma/erpc/zero-copy Serialization to speedup
 
 ## Build Environment
 
@@ -15,11 +17,13 @@ TODO: Add description here.
 ## TODO
 
 1. Implement add rpc
+
 ```
     make test_sim
 ```
 
 Now log shows:
+
 ```
 ---- config::lib::tests::test_add_rpc stdout ----
 I'm No. 0 server. About me: Mutex { data: <locked> }
@@ -30,3 +34,20 @@ stack backtrace:
 ```
 
 Please fix that. Let client receive right result: sum = 2.
+
+## Add rs-tch
+
+1. Get libtorch from the PyTorch website download section and extract the content of the zip file. Set the path.
+
+``` 
+export LIBTORCH=/path/to/libtorch/
+export LIBTORCH_INCLUDE=/path/to/libtorch/
+export LIBTORCH_LIB=/path/to/libtorch/
+export LD_LIBRARY_PATH=$LIBTORCH/lib:$LD_LIBRARY_PAT
+```
+
+2. Add tch
+
+``` 
+cargo add tch
+```
