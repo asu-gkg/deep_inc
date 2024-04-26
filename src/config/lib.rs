@@ -23,7 +23,7 @@ mod tests {
         // config a server
         tokio::spawn(async {
             let duration = Duration::from_secs(3);
-            let conf = Config::new(true, 0);
+            let conf = Config::new(true, 0, 1);
             match timeout(duration, conf.server.start_udp_service_tokio()).await {
                 Ok(_) => { panic!("It shouldn't happen.") }
                 Err(_) => { println!("After 3 seconds, server. {} exited.", conf.server.me) }
@@ -46,7 +46,7 @@ mod tests {
     async fn test_add_rpc() {
         tokio::spawn(async {
             let duration = Duration::from_secs(3);
-            let conf = Config::new(true, 0);
+            let conf = Config::new(true, 0, 1);
             let server_id = conf.server.me;
             let shared_server = Arc::new(Mutex::new(conf.server));
 

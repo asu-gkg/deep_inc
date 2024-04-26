@@ -16,7 +16,7 @@ impl IncHandle {
     }
 
     fn init_process_group(&self, rank: usize, world_size: usize) -> PyResult<()> {
-        let conf = Config::new(true, rank);
+        let conf = Config::new(true, rank, world_size);
         println!("try start_udp_service_tokio");
 
         pyo3_asyncio::tokio::get_runtime().spawn(async move {

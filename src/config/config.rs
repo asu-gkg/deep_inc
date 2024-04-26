@@ -11,8 +11,9 @@ pub struct Config {
 const CALLER: &str = "Config";
 
 impl Config {
-    pub fn new(standalone: bool, server_id: usize) -> Self {
+    pub fn new(standalone: bool, server_id: usize, world_size: usize) -> Self {
         let server = Config::make_local_server(server_id, 1);
+
         Self {
             standalone,
             server,

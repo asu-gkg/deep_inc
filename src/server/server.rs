@@ -15,6 +15,7 @@ pub struct Server {
     workers: Vec<Worker>,
     pub ipv4_addr: Ipv4Addr,
     pub port: u16,
+    pub peers: Vec<Server>,
 }
 
 const DEFAULT_PORT: u16 = 9527;
@@ -24,7 +25,7 @@ pub type SharedServer = Arc<Mutex<Server>>;
 impl Server {
     pub fn new(server_id: usize, worker_size: usize, ipv4_addr: Ipv4Addr) -> Self {
         // todo: init workers
-        Self { me: server_id, workers: vec![], ipv4_addr, port: DEFAULT_PORT }
+        Self { me: server_id, workers: vec![], ipv4_addr, port: DEFAULT_PORT, peers: vec![] }
     }
 
     fn handle_request(&self, req: Request) -> Response {
