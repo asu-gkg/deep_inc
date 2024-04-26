@@ -55,6 +55,17 @@ export LIBTORCH_LIB=/mnt/c/Users/asu/RustroverProjects/libtorch/linux/libtorch-c
 export LD_LIBRARY_PATH=$LIBTORCH/lib:$LD_LIBRARY_PATH
 ```
 
+``` 
+export LIBTORCH=/mnt/c/Users/asu/RustroverProjects/libtorch/linux/libtorch-cxx11-abi-shared-with-deps-2.2.0+cu118/libtorch
+export LIBTORCH_INCLUDE=/mnt/c/Users/asu/RustroverProjects/libtorch/linux/libtorch-cxx11-abi-shared-with-deps-2.2.0+cu118/libtorch
+export LIBTORCH_LIB=/mnt/c/Users/asu/RustroverProjects/libtorch/linux/libtorch-cxx11-abi-shared-with-deps-2.2.0+cu118/libtorch
+export LD_LIBRARY_PATH=$LIBTORCH/lib:$LD_LIBRARY_PATH
+```
+
+But if you have libtorch 2.2.0+cu118, your pytorch version need to be same as libtorch, use this:
+``` 
+conda install pytorch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 pytorch-cuda=12.1 -c pytorch -c nvidia
+```
 
 2. Add tch
 
