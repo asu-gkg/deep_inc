@@ -29,4 +29,6 @@ test_sim_ping:
 test_sim:
 	RUST_BACKTRACE=1 cargo test -- --show-output test_add_rpc
 
+build_py:
+	maturin develop
 

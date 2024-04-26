@@ -13,8 +13,8 @@ const MAX_PACKET_BUFFER_SIZE: usize = 1452;
 pub struct Server {
     pub me: usize,
     workers: Vec<Worker>,
-    ipv4_addr: Ipv4Addr,
-    port: u16,
+    pub ipv4_addr: Ipv4Addr,
+    pub port: u16,
 }
 
 const DEFAULT_PORT: u16 = 9527;
