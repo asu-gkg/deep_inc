@@ -3,7 +3,7 @@ use std::net::{Ipv4Addr, SocketAddrV4};
 use std::sync::{Arc};
 use tokio::net::UdpSocket;
 use tokio::sync::Mutex;
-
+use crate::server::client::Client;
 use crate::server::worker::Worker;
 use crate::server::msg::{AddRequest, AddResponse, PingRequest, PingResponse, Request, Response};
 
@@ -15,7 +15,7 @@ pub struct Server {
     workers: Vec<Worker>,
     pub ipv4_addr: Ipv4Addr,
     pub port: u16,
-    pub peers: Vec<Server>,
+    pub peers: Vec<Client>,
 }
 
 const DEFAULT_PORT: u16 = 9527;
@@ -25,7 +25,15 @@ pub type SharedServer = Arc<Mutex<Server>>;
 impl Server {
     pub fn new(server_id: usize, worker_size: usize, ipv4_addr: Ipv4Addr) -> Self {
         // todo: init workers
-        Self { me: server_id, workers: vec![], ipv4_addr, port: DEFAULT_PORT, peers: vec![] }
+        let mut server = Server {
+            me: server_id,
+            workers: Vec::new(),
+            ipv4_addr,
+            port: DEFAULT_PORT,
+            peers: Vec::new(),
+        };
+        server.port = server.port + (server_id as u16);
+        server
     }
 
     fn handle_request(&self, req: Request) -> Response {

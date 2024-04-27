@@ -13,7 +13,6 @@ const CALLER: &str = "Config";
 impl Config {
     pub fn new(standalone: bool, server_id: usize, world_size: usize) -> Self {
         let server = Config::make_local_server(server_id, 1);
-
         Self {
             standalone,
             server,
@@ -21,7 +20,7 @@ impl Config {
     }
     fn make_local_server(server_id: usize, worker_size: usize) -> Server {
         let server = Server::new(server_id, worker_size, Ipv4Addr::new(0, 0, 0, 0));
-        println!("server{} init, ipv4: {}", server_id, server.ipv4_addr);
+        println!("server{} init, ipv4: {}, port: {}", server_id, server.ipv4_addr, server.port);
         server
     }
     fn make_server() {}

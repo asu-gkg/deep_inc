@@ -20,7 +20,12 @@ impl IncHandle {
         println!("try start_udp_service_tokio");
 
         pyo3_asyncio::tokio::get_runtime().spawn(async move {
+            // 1. start udp service
             conf.server.start_udp_service_tokio().await;
+            // 2. register in etcd
+
+            // 3. get peers service addr
+
         });
         Ok(())
     }
