@@ -1,4 +1,3 @@
-use std::time::Duration;
 use pyo3::{pyclass, pymethods, pymodule, PyResult, Python};
 use pyo3::prelude::PyModule;
 
@@ -16,16 +15,16 @@ impl IncHandle {
     }
 
     fn init_process_group(&self, rank: usize, world_size: usize) -> PyResult<()> {
-        let conf = Config::new(true, rank, world_size);
+        let mut conf = Config::new(true, rank, world_size);
         println!("try start_udp_service_tokio");
 
         pyo3_asyncio::tokio::get_runtime().spawn(async move {
-            // 1. start udp service
+            // 1. register in etcd
+            conf.server.register_in_etcd().await;
+            // 2. get peers service addr
+
+            // 3. start udp service
             conf.server.start_udp_service_tokio().await;
-            // 2. register in etcd
-
-            // 3. get peers service addr
-
         });
         Ok(())
     }

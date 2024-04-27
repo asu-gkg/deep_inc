@@ -98,3 +98,15 @@ rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
 ``` 
 /tmp/etcd-download-test/etcd
 ```
+
+
+#### set etcd key
+``` 
+/tmp/etcd-download-test/etcdctl --endpoints=localhost:2379 put foo bar
+/tmp/etcd-download-test/etcdctl --endpoints=localhost:2379 get foo
+```
+
+#### view key, value
+``` 
+/tmp/etcd-download-test/etcdctl get "" --prefix               # 显示所有键和值
+```

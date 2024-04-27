@@ -1,6 +1,7 @@
 pub mod config;
 pub mod server;
 
+use etcd_client::Client;
 use tch::{Device, Kind, Tensor};
 
 const CALLER: &str = "Main";
@@ -77,10 +78,20 @@ fn auto_grad() {
     println!("a.grad == d/a: {}", a.grad() == d / a);
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     println!("Hello, world!");
     config::config::say_hello();
     server::server::say_hello_from_server(CALLER);
 
     auto_grad();
+
+    let mut client = Client::connect(["localhost:2379"], None).await.expect("");
+    // put kv
+    client.put("foo", "bar", None).await.expect("");
+    // get kv
+    let resp = client.get("foo", None).await.expect("");
+    if let Some(kv) = resp.kvs().first() {
+        println!("Get kv: {{{}: {}}}", kv.key_str().expect(""), kv.value_str().expect(""));
+    }
 }
