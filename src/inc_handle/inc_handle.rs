@@ -1,7 +1,9 @@
 use pyo3::{pyclass, pymethods, pymodule, PyResult, Python};
 use pyo3::prelude::PyModule;
+use serde::de::Unexpected::Option;
 
 use crate::config::config::Config;
+use crate::server::server::Role::_Worker;
 
 #[pyclass]
 struct IncHandle {}
@@ -20,11 +22,11 @@ impl IncHandle {
 
         pyo3_asyncio::tokio::get_runtime().spawn(async move {
             let s = conf.server.as_mut().unwrap();
-            // 1. register in etcd
+            s.set_role(_Worker);
+            s.config_etcd().await;
             s.register_in_etcd().await;
-            // 2. get peers service addr
             s.config_peers().await;
-            // 3. start udp service
+            s.config_agg().await;
             s.start_udp_service_tokio().await;
         });
         Ok(())

@@ -10,7 +10,12 @@ impl Client {
         Self { server_id, socket_addr: "".to_string() }
     }
 
-   pub fn etcd_key(&self) -> String {
+
+    pub fn new_agg() -> Self {
+        Self { server_id: 0, socket_addr: "".to_string() }
+    }
+
+    pub fn etcd_key(&self) -> String {
         format!("server{}", self.server_id)
     }
 }

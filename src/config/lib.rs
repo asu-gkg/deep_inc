@@ -11,7 +11,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_config_tokio() {
-        let local_server = Server::new(0, 1, Ipv4Addr::new(127, 0, 0, 1));
+        let local_server = Server::new(0, 1, Ipv4Addr::new(127, 0, 0, 1), 1);
         tokio::spawn(async move {
             local_server.start_udp_service_tokio().await;
         });

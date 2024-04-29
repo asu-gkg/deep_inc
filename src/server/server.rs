@@ -6,14 +6,28 @@ use tokio::time::{sleep, Duration};
 use tokio::net::UdpSocket;
 use tokio::sync::Mutex;
 use crate::server::client::Client;
-use crate::server::worker::Worker;
 use crate::server::msg::{AddRequest, AddResponse, PingRequest, PingResponse, Request, Response};
 use tokio::runtime::Runtime;
 use etcd_client::Client as EtcdClient;
+use crate::server::server::Role::{_Agg, _Root, _Worker};
+use crate::server::worker::Worker;
 
 const MAX_PACKET_BUFFER_SIZE: usize = 1452;
 
 const ETCD_ADDR: &str = "http://127.0.0.1:2379";
+
+const WORKER_ETCD_KEY: &str = "worker";
+
+const AGG_ETCD_KEY: &str = "agg";
+
+const ROOT_ETCD_KEY: &str = "root";
+
+#[derive(PartialEq, Eq)]
+pub enum Role {
+    _Worker,
+    _Agg,
+    _Root,
+}
 
 pub struct Server {
     pub me: usize,
@@ -23,6 +37,8 @@ pub struct Server {
     pub peers: Vec<Client>,
     pub etcd_cli: Option<EtcdClient>,
     pub runtime: Runtime,
+    pub role: Option<Role>,
+    pub agg: Client,
 }
 
 const DEFAULT_PORT: u16 = 9527;
@@ -32,7 +48,6 @@ pub type SharedServer = Arc<Mutex<Server>>;
 impl Server {
     pub fn new(server_id: usize, _worker_size: usize, ipv4_addr: Ipv4Addr, world_size: usize) -> Self {
         // todo: init workers
-        let rt = Runtime::new().unwrap();
         let mut server = Server {
             me: server_id,
             workers: Vec::new(),
@@ -40,7 +55,9 @@ impl Server {
             port: DEFAULT_PORT,
             peers: Vec::new(),
             etcd_cli: None,
-            runtime: rt,
+            runtime: Runtime::new().unwrap(),
+            role: None,
+            agg: Client::new_agg(),
         };
         println!("world_size: {}", world_size);
         for i in 0..world_size {
@@ -50,13 +67,6 @@ impl Server {
             }
             server.peers.push(peer);
         }
-        server.runtime.block_on(async {
-            let client = EtcdClient::connect([ETCD_ADDR], None).await.
-                expect("connect to etcd server");
-            server.etcd_cli = Option::from(client);
-        });
-
-        server.port = server.port + (server_id as u16);
         server
     }
 
@@ -108,7 +118,16 @@ impl Server {
     }
 
     fn etcd_key(&self) -> String {
-        format!("server{}", self.me)
+        if Some(_Worker) == self.role {
+            return format!("{}/{}", WORKER_ETCD_KEY, self.me);
+        }
+        if Some(_Agg) == self.role {
+            return format!("{}/{}", AGG_ETCD_KEY, self.me);
+        }
+        if Some(_Root) == self.role {
+            return format!("{}/{}", ROOT_ETCD_KEY, self.me);
+        }
+        panic!("shouldn't be here");
     }
 
     pub async fn register_in_etcd(&mut self) {
@@ -144,6 +163,31 @@ impl Server {
             println!("peer.{} addr: {}", x.server_id, x.socket_addr);
         }
     }
+
+    pub async fn config_agg(&mut self) {
+        if self.role != Some(_Worker) {
+            panic!("This node doesn't have to config agg.")
+        }
+    }
+
+    pub async fn config_etcd(&mut self) {
+        let client = EtcdClient::connect([ETCD_ADDR], None).await.
+            expect("connect to etcd server");
+        self.etcd_cli = Option::from(client);
+    }
+
+    pub fn set_role(&mut self, role: Role) {
+        self.role = Option::from(role);
+        self.config_port();
+    }
+    pub fn config_port(&mut self) {
+        if self.role == Some(_Worker) {
+            self.port = self.port + (self.me as u16);
+        }
+        if self.role == Some(_Agg) {
+            self.port = self.port + (self.me as u16) + 8_9_6_4;
+        }
+    }
 }
 
 pub async fn start_udp_service(server: Arc<Mutex<Server>>) {
@@ -161,11 +205,6 @@ pub async fn start_udp_service(server: Arc<Mutex<Server>>) {
             tx.send_to(&buf, &addr).await.unwrap();
         });
     }
-}
-
-
-pub fn say_hello_from_server(caller: &str) {
-    println!("{}, Hello from the server mod!", caller)
 }
 
 
