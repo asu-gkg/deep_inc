@@ -2,6 +2,7 @@ use std::fmt;
 use std::fmt::Debug;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::sync::{Arc};
+use tokio::time::{sleep, Duration};
 use tokio::net::UdpSocket;
 use tokio::sync::Mutex;
 use crate::server::client::Client;
@@ -29,7 +30,7 @@ const DEFAULT_PORT: u16 = 9527;
 pub type SharedServer = Arc<Mutex<Server>>;
 
 impl Server {
-    pub fn new(server_id: usize, worker_size: usize, ipv4_addr: Ipv4Addr) -> Self {
+    pub fn new(server_id: usize, _worker_size: usize, ipv4_addr: Ipv4Addr, world_size: usize) -> Self {
         // todo: init workers
         let rt = Runtime::new().unwrap();
         let mut server = Server {
@@ -41,6 +42,14 @@ impl Server {
             etcd_cli: None,
             runtime: rt,
         };
+        println!("world_size: {}", world_size);
+        for i in 0..world_size {
+            let mut peer = Client::new(i);
+            if i == server_id {
+                peer.socket_addr = server.socket_addr_str();
+            }
+            server.peers.push(peer);
+        }
         server.runtime.block_on(async {
             let client = EtcdClient::connect([ETCD_ADDR], None).await.
                 expect("connect to etcd server");
@@ -108,6 +117,32 @@ impl Server {
         let cli = self.etcd_cli.as_mut().unwrap();
         cli.put(k, v, None).await.expect("put kv");
         println!("success to register in etcd");
+    }
+
+    pub async fn get_etcd_value(&mut self, k: String) -> Option<String> {
+        let cli = self.etcd_cli.as_mut().unwrap();
+        let resp = cli.get(k.clone(), None).await.unwrap();
+        let kvs = resp.kvs();
+        if let Some(kv) = kvs.first() {
+            Option::from(kv.value_str().unwrap().to_string())
+        } else {
+            None
+        }
+    }
+
+    pub async fn config_peers(&mut self) {
+        for i in 0..self.peers.len() {
+            let k = self.peers[i].etcd_key();
+            let mut v = self.get_etcd_value(k.clone()).await;
+            while v.is_none() {
+                sleep(Duration::from_millis(200)).await;
+                v = self.get_etcd_value(k.clone()).await;
+            }
+            self.peers[i].socket_addr = v.unwrap();
+        }
+        for x in &self.peers {
+            println!("peer.{} addr: {}", x.server_id, x.socket_addr);
+        }
     }
 }
 

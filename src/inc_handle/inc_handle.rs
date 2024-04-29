@@ -15,16 +15,17 @@ impl IncHandle {
     }
 
     fn init_process_group(&self, rank: usize, world_size: usize) -> PyResult<()> {
-        let mut conf = Config::new(true, rank, world_size);
+        let mut conf = Config::new(false, rank, world_size);
         println!("try start_udp_service_tokio");
 
         pyo3_asyncio::tokio::get_runtime().spawn(async move {
+            let s = conf.server.as_mut().unwrap();
             // 1. register in etcd
-            conf.server.register_in_etcd().await;
+            s.register_in_etcd().await;
             // 2. get peers service addr
-
+            s.config_peers().await;
             // 3. start udp service
-            conf.server.start_udp_service_tokio().await;
+            s.start_udp_service_tokio().await;
         });
         Ok(())
     }

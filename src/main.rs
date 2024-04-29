@@ -4,7 +4,7 @@ pub mod server;
 use etcd_client::Client;
 use tch::{Device, Kind, Tensor};
 
-const CALLER: &str = "Main";
+
 
 fn f(a: &Tensor) -> Tensor {
     let mut b: Tensor = 2 * a;
@@ -81,7 +81,8 @@ fn auto_grad() {
 #[tokio::main]
 async fn main() {
     println!("Hello, world!");
-    config::config::say_hello();
+    config::config::_say_hello();
+    const CALLER: &str = "Main";
     server::server::say_hello_from_server(CALLER);
 
     auto_grad();
