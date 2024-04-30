@@ -32,3 +32,8 @@ test_sim:
 build_py:
 	maturin develop
 
+run_agg:
+	cargo run
+
+clear_key:
+	/tmp/etcd-download-test/etcdctl del --from-key ''

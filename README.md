@@ -110,3 +110,8 @@ rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
 ``` 
 /tmp/etcd-download-test/etcdctl get "" --prefix               # 显示所有键和值
 ```
+
+#### etcd clear
+``` 
+/tmp/etcd-download-test/etcdctl del --from-key ''
+```
