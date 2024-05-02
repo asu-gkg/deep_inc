@@ -20,7 +20,6 @@ pyo3-asyncio = { version = "0.20.0", features = ["attributes", "tokio-runtime"] 
 derive_more = "0.99"
 etcd-client = "0.12.4"
 
-
 [dependencies.pyo3]
 version = "0.20.0"
 features = ["extension-module"]

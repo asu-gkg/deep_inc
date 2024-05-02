@@ -1,7 +1,7 @@
 use std::string::ToString;
-use pyo3::{pyclass, pymethods, pymodule, PyResult, Python};
+use pyo3::{pyclass, pyfunction, pymethods, pymodule, PyResult, Python};
 use pyo3::prelude::PyModule;
-// use tch::{Kind, Tensor};
+use tch::{Kind, Tensor};
 use crate::config::config::Config;
 use crate::server::server::Role::_Worker;
 
@@ -42,21 +42,21 @@ impl IncHandle {
         if op != REDUCE_OP_SUM {
             panic!("impl it");
         }
-        // unsafe {
-        //     println!("data_type: {}", data_type);
-        //     let data = std::slice::from_raw_parts(addr as *const u8, size);
-        //     let tensor = Tensor::from_data_size(data, &shape, Kind::Float);
-        //
-        //     let sum = tensor.sum(Kind::Float);
-        //
-        //     println!("Sum of elements: {:?}", sum);
-        //     panic!("hi");
-        // }
+        unsafe {
+            println!("data_type: {}", data_type);
+            let data = std::slice::from_raw_parts(addr as *const u8, 4);
+            println!("data: {:?}", data);
+            let tensor = Tensor::from_data_size(data, &shape, Kind::Float);
+
+            let sum = tensor.sum(Kind::Float);
+
+            println!("Sum of elements: {:?}", sum);
+            panic!("hi");
+        }
         pyo3_asyncio::tokio::get_runtime().block_on(async move {});
         Ok(())
     }
 }
-
 #[pymodule]
 fn deep_inc(py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<IncHandle>()?;
