@@ -73,6 +73,7 @@ conda install pytorch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 pytorch-cuda=
 cargo add tch
 ```
 
+
 3. Install etcd
 之后把etcd搞到一个公开的地址上，后面就写死这个地址好了。
 ``` 
