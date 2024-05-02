@@ -116,3 +116,13 @@ rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
 ``` 
 /tmp/etcd-download-test/etcdctl del --from-key ''
 ```
+
+
+
+#### windows wsl
+``` 
+source iso_env/bin/activate
+export LIBTORCH_USE_PYTORCH=1
+export PYO3_PYTHON=/usr/bin/python3
+export LD_LIBRARY_PATH=/mnt/c/Users/asu/RustroverProjects/inc/iso_env/lib/python3.12/site-packages/torch/lib/:$LD_LIBRARY_PATH
+```
