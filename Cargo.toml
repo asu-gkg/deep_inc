@@ -15,7 +15,6 @@ serde = { version = "1.0", features = ["derive"] }
 bincode = "1.3"
 serde_derive = "1.0"
 tch = { version = "0.16.0", features = ["python-extension"], git = "https://github.com/asu-gkg/tch-rs" }
-torch-sys = { features = ["python-extension"], version = "0.16.0" }
 rand = "0.8.5"
 pyo3-asyncio = { version = "0.20.0", features = ["attributes", "tokio-runtime"] }
 derive_more = "0.99"
