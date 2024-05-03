@@ -650,8 +650,10 @@ dependencies = [
  "derive_more",
  "etcd-client",
  "futures",
+ "lazy_static",
  "pyo3",
  "pyo3-asyncio",
+ "pyo3-tch",
  "rand",
  "serde",
  "serde_derive",
@@ -1165,6 +1167,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pyo3-tch"
+version = "0.16.0"
+source = "git+https://github.com/asu-gkg/tch-rs.git#4113a87177adbf3469880b5356f9ff29557d5bfe"
+dependencies = [
+ "pyo3",
+ "tch",
+ "torch-sys",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1439,7 +1451,7 @@ checksum = "e1fc403891a21bcfb7c37834ba66a547a8f402146eba7265b5a6d88059c9ff2f"
 [[package]]
 name = "tch"
 version = "0.16.0"
-source = "git+https://github.com/asu-gkg/tch-rs#4113a87177adbf3469880b5356f9ff29557d5bfe"
+source = "git+https://github.com/asu-gkg/tch-rs.git#4113a87177adbf3469880b5356f9ff29557d5bfe"
 dependencies = [
  "half",
  "lazy_static",
@@ -1611,7 +1623,7 @@ dependencies = [
 [[package]]
 name = "torch-sys"
 version = "0.16.0"
-source = "git+https://github.com/asu-gkg/tch-rs#4113a87177adbf3469880b5356f9ff29557d5bfe"
+source = "git+https://github.com/asu-gkg/tch-rs.git#4113a87177adbf3469880b5356f9ff29557d5bfe"
 dependencies = [
  "anyhow",
  "cc",

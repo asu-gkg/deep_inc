@@ -1,12 +1,16 @@
 use std::net::{Ipv4Addr};
+use std::sync::Arc;
+use pyo3::pyclass;
+use tokio::sync::Mutex;
 use crate::server::say_hello_from_server;
 use crate::server::server::{Server};
 use crate::server::server::Role::_Agg;
 
 #[derive(Debug)]
+#[pyclass]
 pub struct Config {
     standalone: bool,
-    pub server: Option<Server>,
+    pub server: Option<Arc<Mutex<Server>>>,
 }
 
 
@@ -16,12 +20,16 @@ impl Config {
             standalone,
             server: None,
         };
-        if standalone {
-            conf.server = Option::from(conf.make_local_server(server_id, world_size));
-        } else {
-            conf.server = Option::from(Server::new(server_id, 1, Ipv4Addr::new(0, 0, 0, 0), world_size));
-        }
+        conf.setup(server_id, world_size);
         conf
+    }
+
+    pub fn setup(&mut self, server_id: usize, world_size: usize) {
+        if self.standalone {
+            self.server = Some(Arc::new(Mutex::new(self.make_local_server(server_id, world_size))));
+        } else {
+            self.server = Some(Arc::new(Mutex::new(Server::new(server_id, 1, Ipv4Addr::new(0, 0, 0, 0), world_size))));
+        }
     }
 
     pub fn new_agg(server_id: usize, world_size: usize) -> Self {
@@ -29,7 +37,7 @@ impl Config {
         s.set_role(_Agg);
         let mut conf = Config {
             standalone: false,
-            server: Some(s),
+            server: Some(Arc::new(Mutex::new(s))),
         };
         conf
     }

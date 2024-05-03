@@ -46,9 +46,9 @@ mod tests {
     async fn test_add_rpc() {
         tokio::spawn(async {
             let duration = Duration::from_secs(3);
-            let conf = Config::new(true, 0, 1);
-            let server_id = conf.server.me;
-            let shared_server = Arc::new(Mutex::new(conf.server));
+            let mut conf = Config::new(true, 0, 1);
+            let server_id = conf.server.unwrap().lock().await.me;
+            let shared_server = Arc::new(Mutex::new(conf.server.unwrap().lock().await.unwrap()));
 
             match timeout(duration, start_udp_service(shared_server)).await {
                 Ok(_) => { panic!("It shouldn't happen.") }

@@ -33,7 +33,7 @@ build_py:
 	maturin develop
 
 run_agg:
-	cargo run
+	python3 run_agg.py
 
 clear_key:
 	/tmp/etcd-download-test/etcdctl del --from-key ''
