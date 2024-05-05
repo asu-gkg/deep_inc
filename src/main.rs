@@ -36,13 +36,4 @@ async fn main() {
 
     println!("features: {}", features);
     println!("labels: {}", labels);
-
-    let mut conf = Config::new_agg(0, 2);
-    {
-        let s = conf.server.as_mut().unwrap();
-        s.config_etcd().await;
-        s.register_in_etcd().await;
-        s.config_workers_for_agg().await;
-        s.start_udp_service_tokio().await;
-    }
 }

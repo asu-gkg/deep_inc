@@ -42,8 +42,7 @@ impl IncHandle {
         if op == REDUCE_OP_SUM {
             let _tensor = tensor.clone();
             pyo3_asyncio::tokio::get_runtime().block_on(async move {
-                println!("tensor: {}", _tensor);
-                // 目前暂时不需要启动worker的udp服务，所以worker暂时只是客户端即可
+                self.conf.server.clone().unwrap().lock().await.all_reduce_sum(_tensor).await;
             });
             return Ok(PyTensor(Arc::try_unwrap(tensor).unwrap()));
         }

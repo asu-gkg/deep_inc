@@ -1,4 +1,6 @@
+use std::sync::Arc;
 use serde_derive::{Deserialize, Serialize};
+use tch::Tensor;
 
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -21,6 +23,19 @@ pub struct AddRequest {
     pub b: i32,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AllReduceSumOpRequest {
+    pub server_id: usize,
+    #[serde(with = "tch_serde::serde_tensor")]
+    tensor: Tensor,
+}
+
+impl AllReduceSumOpRequest {
+    pub fn new(server_id: usize, tensor: Arc<Tensor>) -> Self {
+        Self { server_id, tensor: tensor.copy() }
+    }
+}
+
 impl AddRequest {
     pub fn new(sender_id: usize, receiver_id: usize, a: i32, b: i32) -> Self {
         Self { sender_id, receiver_id, a, b }
@@ -33,6 +48,27 @@ pub struct AddResponse {
     pub receiver_id: usize,
     pub sum: i32,
 }
+
+#[derive(Serialize, Deserialize)]
+struct SerializableTensor {
+    data: Vec<f32>,
+    shape: Vec<i64>,
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AllReduceSumOpResponse {
+    pub agg_id: usize,
+    #[serde(with = "tch_serde::serde_tensor")]
+    pub tensor: Tensor,
+}
+
+impl AllReduceSumOpResponse {
+    pub fn new(agg_id: usize, tensor: Tensor) -> Self {
+        Self { agg_id, tensor }
+    }
+}
+
 
 impl AddResponse {
     pub fn new(sender_id: usize, receiver_id: usize, sum: i32) -> Self {

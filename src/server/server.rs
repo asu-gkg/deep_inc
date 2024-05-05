@@ -6,9 +6,10 @@ use tokio::time::{sleep, Duration};
 use tokio::net::UdpSocket;
 use tokio::sync::Mutex;
 use crate::server::client::Client;
-use crate::server::msg::{AddRequest, AddResponse, PingRequest, PingResponse, Request, Response};
+use crate::server::msg::{AddRequest, AddResponse, AllReduceSumOpRequest, PingRequest, PingResponse, Request, Response};
 use tokio::runtime::Runtime;
 use etcd_client::{Client as EtcdClient, GetOptions};
+use tch::Tensor;
 use crate::server::{etcd_key, get_server_id};
 use crate::server::server::Role::{_Agg, _Worker};
 
@@ -92,6 +93,16 @@ impl Server {
         // add code here
         println!("recv add req, a: {}, b: {}", req.a, req.b);
         None
+    }
+
+    pub async fn all_reduce_sum(&self, mut tensor: Arc<Tensor>) {
+        let agg = &self.agg_lst[self.agg_id];
+        let shared_socket = agg.socket.clone().unwrap().clone();
+        let socket = shared_socket.lock().await;
+        let req = AllReduceSumOpRequest::new(self.me, tensor);
+        let data = bincode::serialize(&req).unwrap();
+        socket.send(&data).await.unwrap();
+        loop {}
     }
 
     fn handle_ping(&self, req: PingRequest) -> Option<PingResponse> {
@@ -226,6 +237,9 @@ impl Server {
             let v = x.1;
             println!("agg_sid: {}, v: {}", agg_sid, v);
             self.agg_lst[agg_sid].socket_addr = v;
+            let sock = UdpSocket::bind(self.socket_addr().to_string()).await.unwrap();
+            sock.connect(self.agg_lst[agg_sid].socket_addr.clone()).await.unwrap();
+            self.agg_lst[agg_sid].socket = Some(Arc::new(Mutex::new(sock)));
         }
         println!("success to get agg list");
     }

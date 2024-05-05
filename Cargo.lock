@@ -537,6 +537,7 @@ checksum = "6dd08c532ae367adf81c312a4580bc67f1d0fe8bc9c460520283f4c0ff277888"
 dependencies = [
  "cfg-if",
  "crunchy",
+ "serde",
 ]
 
 [[package]]
@@ -658,6 +659,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "tch",
+ "tch-serde",
  "tokio",
 ]
 
@@ -1462,6 +1464,16 @@ dependencies = [
  "thiserror",
  "torch-sys",
  "zip",
+]
+
+[[package]]
+name = "tch-serde"
+version = "0.7.0"
+source = "git+https://github.com/asu-gkg/tch-serde.git#baad4ebcbfb2f060eabc056cc1a190d3010978d3"
+dependencies = [
+ "half",
+ "serde",
+ "tch",
 ]
 
 [[package]]

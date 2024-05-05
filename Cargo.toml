@@ -21,7 +21,7 @@ derive_more = "0.99"
 etcd-client = "0.12.4"
 pyo3 = { version = "0.20.0", features = ["extension-module"] }
 lazy_static = "1.4"
-
+tch-serde = { git = "https://github.com/asu-gkg/tch-serde.git" }
 
 [dependencies.pyo3-tch]
 git = "https://github.com/asu-gkg/tch-rs.git"
