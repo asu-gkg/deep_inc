@@ -37,3 +37,6 @@ run_agg:
 
 clear_key:
 	/tmp/etcd-download-test/etcdctl del --from-key ''
+
+run_worker:
+	python3 run_worker.py

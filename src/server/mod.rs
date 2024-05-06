@@ -5,6 +5,10 @@ pub mod server;
 pub mod worker;
 pub mod msg;
 mod client;
+mod write_all;
+mod agg_service;
+mod register;
+mod all_reduce_sum;
 
 
 pub fn say_hello_from_server(caller: &str) {

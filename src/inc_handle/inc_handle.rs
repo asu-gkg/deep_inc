@@ -6,7 +6,6 @@ use pyo3::prelude::PyModule;
 use pyo3_tch::{PyTensor, wrap_tch_err};
 use crate::config::config::Config;
 use crate::server::server::Role::_Worker;
-use crate::server::server::start_udp_service;
 
 const REDUCE_OP_SUM: &str = "reduce_op_sum";
 

@@ -6,7 +6,7 @@ mod tests {
     use tokio::time::timeout;
     use tokio::sync::{Mutex};
     use crate::config::config::Config;
-    use crate::server::msg::AddRequest;
+    use crate::server::msg::{AddRequest, Request};
     use crate::server::server::{Server, start_udp_service};
 
     #[tokio::test]
@@ -59,7 +59,7 @@ mod tests {
         tokio::spawn(async {
             let socket = UdpSocket::bind("0.0.0.0:9577").unwrap();
             socket.connect("0.0.0.0:9527").expect("socket connect fail");
-            let req = AddRequest::new(0, 0, 1, 1);
+            let req = Request::Add(AddRequest::new(0, 0, 1, 1));
             let data = bincode::serialize(&req).unwrap();
             socket.send(&data).expect("send data fail");
             println!("Client sends a msg to server");

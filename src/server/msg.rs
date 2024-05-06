@@ -7,12 +7,14 @@ use tch::Tensor;
 pub enum Request {
     Add(AddRequest),
     Ping(PingRequest),
+    AllReduceSumOp(AllReduceSumOpRequest),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Response {
     Add(AddResponse),
     Ping(PingResponse),
+    AllReduceSumOp(AllReduceSumOpResponse),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -27,7 +29,7 @@ pub struct AddRequest {
 pub struct AllReduceSumOpRequest {
     pub server_id: usize,
     #[serde(with = "tch_serde::serde_tensor")]
-    tensor: Tensor,
+    pub tensor: Tensor,
 }
 
 impl AllReduceSumOpRequest {
