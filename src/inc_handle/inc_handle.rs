@@ -53,9 +53,9 @@ impl IncHandle {
         Ok(PyTensor(tensor))
     }
 
-    fn init_agg(&self) -> PyResult<()> {
+    fn init_agg(&self, world_size: usize) -> PyResult<()> {
         pyo3_asyncio::tokio::get_runtime().block_on(async {
-            let mut conf = Config::new_agg(0, 2);
+            let mut conf = Config::new_agg(0, world_size);
             {
                 let shard_s = conf.server.unwrap();
                 let mut s = shard_s.lock().await;

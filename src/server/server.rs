@@ -1,29 +1,26 @@
 use std::collections::HashMap;
 use std::fmt;
 use std::fmt::Debug;
-use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
-use std::ops::Add;
+use std::net::{Ipv4Addr, SocketAddrV4};
 use std::sync::{Arc};
-use tokio::time::{sleep, Duration, timeout};
 use tokio::net::UdpSocket;
 use tokio::sync::Mutex;
 use crate::server::client::Client;
-use crate::server::msg::{AddRequest, AddResponse, AllReduceSumOpRequest, AllReduceSumOpResponse, PingRequest, PingResponse, Request, Response};
+use crate::server::msg::{AddRequest, AddResponse, PingRequest, PingResponse, Request, Response};
 use tokio::runtime::Runtime;
-use etcd_client::{Client as EtcdClient, GetOptions};
+use etcd_client::{Client as EtcdClient};
 use tch::Tensor;
-use crate::server::{etcd_key, get_server_id};
 use crate::server::server::Role::{_Agg, _Worker};
 
-pub(crate) const MAX_PACKET_BUFFER_SIZE: usize = 1452;
+pub const MAX_PACKET_BUFFER_SIZE: usize = 1452;
 
 const ETCD_ADDR: &str = "http://127.0.0.1:2379";
 
-pub(crate) const WORKER_ETCD_KEY: &str = "worker";
+pub const WORKER_ETCD_KEY: &str = "worker";
 
-pub(crate) const AGG_ETCD_KEY: &str = "agg";
+pub const AGG_ETCD_KEY: &str = "agg";
 
-pub(crate) const ROOT_ETCD_KEY: &str = "root";
+pub const ROOT_ETCD_KEY: &str = "root";
 
 #[derive(PartialEq, Eq)]
 #[derive(Debug, Copy, Clone)]
@@ -47,7 +44,7 @@ pub struct Server {
     pub agg_id: usize,
     pub agg_size: usize,
 
-    pub(crate) all_reduce_state: Arc<Mutex<HashMap<usize, Tensor>>>,
+    pub all_reduce_state: Arc<Mutex<HashMap<usize, Tensor>>>,
 }
 
 const DEFAULT_PORT: u16 = 9527;
@@ -102,18 +99,17 @@ impl Server {
     }
 
 
-
     fn handle_ping(&self, req: PingRequest) -> Option<PingResponse> {
         // add code here
         None
     }
 
 
-    pub(crate) fn socket_addr(&self) -> SocketAddrV4 {
+    pub fn socket_addr(&self) -> SocketAddrV4 {
         SocketAddrV4::new(self.ipv4_addr, self.port)
     }
 
-    pub(crate) fn socket_addr_str(&self) -> String {
+    pub fn socket_addr_str(&self) -> String {
         self.socket_addr().to_string()
     }
 
