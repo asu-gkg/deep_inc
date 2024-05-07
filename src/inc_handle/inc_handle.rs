@@ -1,9 +1,10 @@
 use std::ops::Deref;
 use std::string::ToString;
-use std::sync::Arc;
+use std::sync::{Arc};
 use pyo3::{pyclass, pymethods, pymodule, PyResult, Python};
 use pyo3::prelude::PyModule;
 use pyo3_tch::{PyTensor, wrap_tch_err};
+use tokio::sync::Mutex;
 use crate::config::config::Config;
 use crate::server::server::Role::_Worker;
 
@@ -39,11 +40,11 @@ impl IncHandle {
     fn _all_reduce(&self, tensor: PyTensor, op: String) -> PyResult<PyTensor> {
         let mut tensor = Arc::new(tensor.0);
         if op == REDUCE_OP_SUM {
-            let _tensor = tensor.clone();
-            pyo3_asyncio::tokio::get_runtime().block_on(async move {
-                self.conf.server.clone().unwrap().lock().await.all_reduce_sum(_tensor).await;
+            let ret = pyo3_asyncio::tokio::get_runtime().block_on(async move {
+                let ret = self.conf.server.clone().unwrap().lock().await.all_reduce_sum(tensor.clone()).await;
+                return ret;
             });
-            return Ok(PyTensor(Arc::try_unwrap(tensor).unwrap()));
+            return Ok(PyTensor(ret));
         }
         panic!("impl it");
     }
