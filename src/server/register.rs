@@ -19,7 +19,7 @@ impl Server {
         let v = self.socket_addr_str();
         let cli = self.etcd_cli.as_mut().unwrap();
         cli.put(k, v, None).await.expect("put kv");
-        println!("success to register in etcd");
+        // println!("success to register in etcd");
     }
 
     pub async fn get_etcd_value(&mut self, k: String) -> Option<String> {
@@ -38,8 +38,8 @@ impl Server {
         let mut resp = &cli.get(k.clone(), Some(GetOptions::new().with_prefix())).await.unwrap();
         let mut kvs = resp.kvs();
         let mut ret = Vec::new();
-        println!("k: {}", k);
-        println!("kvs.len: {}", kvs.len());
+        // println!("k: {}", k);
+        // println!("kvs.len: {}", kvs.len());
         if expect_len.is_some() && kvs.len() != expect_len.unwrap() {
             return ret;
         }
@@ -61,11 +61,11 @@ impl Server {
             }
             self.peers[i].socket_addr = v.unwrap();
         }
-        println!();
-        println!("self.peers.len: {}", self.peers.len());
-        for x in &self.peers {
-            println!("peer.{} addr: {}", x.server_id, x.socket_addr);
-        }
+        // println!();
+        // println!("self.peers.len: {}", self.peers.len());
+        // for x in &self.peers {
+        //     println!("peer.{} addr: {}", x.server_id, x.socket_addr);
+        // }
     }
 
     pub async fn config_workers_for_agg(&mut self) {
@@ -76,17 +76,17 @@ impl Server {
             self.workers.push(Client::new(i));
         }
         let mut kvs = self.get_etcd_value_with_prefix(String::from(WORKER_ETCD_KEY), Some(self.world_size)).await;
-        println!("finding workers..");
+        // println!("finding workers..");
         while kvs.len() != self.world_size {
-            print!(".");
+            // print!(".");
             sleep(Duration::from_millis(200)).await;
             kvs = self.get_etcd_value_with_prefix(String::from(WORKER_ETCD_KEY), Some(self.world_size)).await;
         }
-        println!();
+        // println!();
         for x in kvs {
             let worker_sid = get_server_id(x.0);
             let v = x.1;
-            println!("worker_sid: {}, v: {}", worker_sid, v);
+            // println!("worker_sid: {}, v: {}", worker_sid, v);
             self.workers[worker_sid].socket_addr = v;
         }
     }
@@ -99,23 +99,23 @@ impl Server {
             self.agg_lst.push(Client::new_agg(i));
         }
         let mut kvs = self.get_etcd_value_with_prefix(String::from(AGG_ETCD_KEY), Some(self.agg_size)).await;
-        println!("kvs.len(): {}, self.agg_size : {}", kvs.len(), self.agg_size);
-        println!("finding agg..");
+        // println!("kvs.len(): {}, self.agg_size : {}", kvs.len(), self.agg_size);
+        // println!("finding agg..");
         while kvs.len() != self.agg_size {
-            print!(".");
+            // print!(".");
             sleep(Duration::from_millis(200)).await;
             kvs = self.get_etcd_value_with_prefix(String::from(AGG_ETCD_KEY), Some(self.agg_size)).await;
         }
-        println!();
+        // println!();
         for x in kvs {
             let agg_sid = get_server_id(x.0);
             let v = x.1;
-            println!("agg_sid: {}, v: {}", agg_sid, v);
+            // println!("agg_sid: {}, v: {}", agg_sid, v);
             self.agg_lst[agg_sid].socket_addr = v;
             let sock = UdpSocket::bind(self.socket_addr().to_string()).await.unwrap();
             sock.connect(self.agg_lst[agg_sid].socket_addr.clone()).await.unwrap();
             self.agg_lst[agg_sid].socket = Some(Arc::new(Mutex::new(sock)));
         }
-        println!("success to get agg list");
+        // println!("success to get agg list");
     }
 }

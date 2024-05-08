@@ -69,7 +69,7 @@ impl Server {
             agg_size: 1,
             all_reduce_state: Arc::new(Mutex::new(HashMap::new())),
         };
-        println!("world_size: {}", world_size);
+        // println!("world_size: {}", world_size);
         for i in 0..world_size {
             let mut peer = Client::new(i);
             if i == server_id {
@@ -94,7 +94,7 @@ impl Server {
 
     fn handle_add(&self, req: AddRequest) -> Option<AddResponse> {
         // add code here
-        println!("recv add req, a: {}, b: {}", req.a, req.b);
+        // println!("recv add req, a: {}, b: {}", req.a, req.b);
         None
     }
 
@@ -134,7 +134,7 @@ impl Server {
 }
 
 pub async fn start_udp_service(server: Arc<Mutex<Server>>) {
-    println!("I'm No. {} server. About me: {:?}", server.lock().await.me, server);
+    // println!("I'm No. {} server. About me: {:?}", server.lock().await.me, server);
     let socket = UdpSocket::bind(server.lock().await.socket_addr()).await.unwrap();
     let r = Arc::new(socket);
     loop {

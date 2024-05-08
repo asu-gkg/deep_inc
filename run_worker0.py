@@ -7,5 +7,6 @@ inc.init_process_group(0, 2)
 data = [1]
 x = torch.tensor(data)
 
+
 inc._all_reduce(x, 'reduce_op_sum')
 

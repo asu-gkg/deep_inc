@@ -5,7 +5,7 @@ use crate::server::server::{MAX_PACKET_BUFFER_SIZE, Server};
 
 impl Server {
     pub async fn start_udp_service_tokio(&self) {
-        println!("I'm No. {} server. About me: {:?}, socket_addr: {}", self.me, self, self.socket_addr_str());
+        // println!("I'm No. {} server. About me: {:?}, socket_addr: {}", self.me, self, self.socket_addr_str());
         let socket = UdpSocket::bind(self.socket_addr()).await.unwrap();
         let r = Arc::new(socket);
         let me = self.me;
@@ -15,26 +15,26 @@ impl Server {
             let tx = r.clone();
             let (_, addr) = r.recv_from(&mut buf).await.unwrap();
             let req: Request = bincode::deserialize(&buf).unwrap();
-            println!("req: {:?}, addr: {:?}", req, addr);
+            // println!("req: {:?}, addr: {:?}", req, addr);
             match req {
                 Request::AllReduceSumOp(req) => {
-                    println!("req: {:?}", &req);
+                    // println!("req: {:?}", &req);
                     let mut record = self.all_reduce_state.lock().await;
                     record.insert(req.server_id, req.tensor);
-                    println!("world_size: {}, now recv {} tensor", self.world_size, record.len());
+                    // println!("world_size: {}, now recv {} tensor", self.world_size, record.len());
 
                     if record.len() == self.world_size {
                         let mut result = record.get_key_value(&0).unwrap().1.zero();
                         for x in record.iter() {
                             result = result + x.1;
                         }
-                        println!("{:?}", result);
+                        // println!("{:?}", result);
                         record.clear();
                         let resp = Response::AllReduceSumOp(AllReduceSumOpResponse::new(me, result));
                         self.write_all(tx, resp);
                     }
                 }
-                _ => {todo!("impl it.")}
+                _ => { panic!("Shouldn't be here.") }
             }
         }
     }

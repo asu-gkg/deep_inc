@@ -30,7 +30,7 @@ test_sim:
 	RUST_BACKTRACE=1 cargo test -- --show-output test_add_rpc
 
 build_py:
-	maturin develop
+	maturin develop --release
 
 run_agg:
 	python3 run_agg.py

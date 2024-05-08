@@ -10,7 +10,7 @@ impl Server {
         let shared_socket = agg.socket.clone().unwrap().clone();
         let socket = shared_socket.lock().await;
         let req = Request::AllReduceSumOp(AllReduceSumOpRequest::new(self.me, tensor));
-        println!("agg.socket_addr: {}", agg.socket_addr);
+        // println!("agg.socket_addr: {}", agg.socket_addr);
         let data = bincode::serialize(&req).unwrap();
         socket.send(&data).await.unwrap();
         let mut buf = vec![0u8; MAX_PACKET_BUFFER_SIZE];
@@ -18,10 +18,10 @@ impl Server {
         let resp: Response = bincode::deserialize(&buf).unwrap();
         match resp {
             Response::AllReduceSumOp(resp) => {
-                println!("resp: {:?}", resp);
+                // println!("resp: {:?}", resp);
                 return resp.tensor;
             }
-            _ => { todo!("impl it") }
+            _ => { panic!("Shouldn't be here.") }
         }
     }
 }

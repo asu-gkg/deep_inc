@@ -19,12 +19,12 @@ struct IncHandle {
 impl IncHandle {
     #[new]
     fn new() -> Self {
-        println!("Now we have a handle to call rust functions.");
+        // println!("Now we have a handle to call rust functions.");
         Self { conf: Config::new(false, 0, 0) }
     }
 
     fn init_process_group(&mut self, rank: usize, world_size: usize) -> PyResult<()> {
-        println!("try start_udp_service_tokio");
+        // println!("try start_udp_service_tokio");
         self.conf = Config::new(false, rank, world_size);
         pyo3_asyncio::tokio::get_runtime().block_on(async {
             let mut s = self.conf.server.as_mut().unwrap().lock().await;
