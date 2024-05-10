@@ -12,7 +12,7 @@ def perform_operation(dim):
     return inc._all_reduce(x, 'reduce_op_sum')
 
 # 定义不同的tensor维度
-dimensions = [64, 128, 256]
+dimensions = [64, 128, 256, 512]
 
 # 测量每个维度的平均执行时间
 for dim in dimensions:

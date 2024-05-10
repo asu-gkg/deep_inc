@@ -12,7 +12,7 @@ use etcd_client::{Client as EtcdClient};
 use tch::Tensor;
 use crate::server::server::Role::{_Agg, _Worker};
 
-pub const MAX_PACKET_BUFFER_SIZE: usize = 1452;
+pub const MAX_PACKET_BUFFER_SIZE: usize = 1452*10;
 
 const ETCD_ADDR: &str = "http://127.0.0.1:2379";
 
@@ -134,7 +134,7 @@ impl Server {
 }
 
 pub async fn start_udp_service(server: Arc<Mutex<Server>>) {
-    // println!("I'm No. {} server. About me: {:?}", server.lock().await.me, server);
+    println!("I'm No. {} server. About me: {:?}", server.lock().await.me, server);
     let socket = UdpSocket::bind(server.lock().await.socket_addr()).await.unwrap();
     let r = Arc::new(socket);
     loop {

@@ -9,7 +9,7 @@ def perform_operation(dim):
     x = torch.randn(dim)
     return inc._all_reduce(x, 'reduce_op_sum')
 
-dimensions = [64, 128, 256]
+dimensions = [64, 128, 256, 512]
 
 for dim in dimensions:
     time_taken = timeit.timeit('perform_operation(dim)', globals=globals(), number=100)
